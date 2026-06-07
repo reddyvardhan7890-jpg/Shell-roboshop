@@ -7,6 +7,7 @@ for instance in "$@"
 do
     instance_id=$(aws ec2 run-instances \
         --image-id "$AMI_ID" \
+        --instance-name "$instance" \
         --instance-type t3.micro \
         --security-group-ids "$SG_ID" \
         --tag-specifications "ResourceType=instance,Tags=[{Key=Harsha,Value=vardhan}]" \
@@ -23,4 +24,5 @@ do
         echo "InstanceId=$instance_id launched successfully"
     fi
 done
+  echo "Instance-name=$@ launched successfully"
   echo "private ip address =$instance_id lanched successfully"
