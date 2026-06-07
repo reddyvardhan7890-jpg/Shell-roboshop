@@ -7,10 +7,10 @@ for instance in "$@"
 do
     instance_id=$(aws ec2 run-instances \
         --image-id "$AMI_ID" \
-        --Name "$instance" \
+        --Name "$@" \
         --instance-type t3.micro \
         --security-group-ids "$SG_ID" \
-        --tag-specifications "ResourceType=instance,Tags=[{Key=Harsha,Value=vardhan}]" \
+        --tag-specifications "ResourceType=instance,Tags=[{Key=Harsha,Value=$@}]" \
         --query 'Instances[0].InstanceId' \
         --query 'Instances[0].PrivateIpAddress' \
         --output text)
