@@ -7,13 +7,13 @@ DOMAIN_NAME="daws88sonline.online"
 
 for instance in "$@"
 do
-    INSTANCE_ID=$(aws ec2 run-instances \
+    INSTANCE_ID=$( aws ec2 run-instances \
         --image-id "$AMI_ID" \
-        --instance-type t3.micro \
+        --instance-type "t3.micro" \
         --security-group-ids "$SG_ID" \
         --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$instance}]" \
         --query 'Instances[0].InstanceId' \
-        --output text)
+        --output text )
 
     rc=$?
 
@@ -51,7 +51,7 @@ if [ $instance == "frontend" ]; then
     --hosted-zone-id $ZONE_ID \
     --change-batch '
     {
-        "comment": "Updating record for '"$instance"'",
+        "Comment": "Updating record for '"$instance"'",
         "Changes": [
             {
                 "Action": "UPSERT",
