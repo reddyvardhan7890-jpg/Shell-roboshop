@@ -7,26 +7,25 @@ DOMAIN_NAME="daws88sonline.online"
 
 for instance in "$@"
 do
-    instance_id=$(aws ec2 run-instances \
+    INSTANCE_ID=$(aws ec2 run-instances \
         --image-id "$AMI_ID" \
         --instance-type t3.micro \
         --security-group-ids "$SG_ID" \
-        --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$@}]" \
+        --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$instance}]" \
         --query 'Instances[0].InstanceId' \
-        ##--query 'Instances[0].PrivateIpAddress' \
         --output text)
 
-    rc=$?gi
+    rc=$?
 
     if [ $rc -ne 0 ]; then
         echo "Failed to launch instance: $instance"
         exit 1
     else
-        echo "InstanceId=$instance_id launched successfully"
+        echo "InstanceId=$INSTANCE_ID launched successfully"
     fi
-done
-  echo "Name=$@ launched successfully"
-  ##echo "private ip address =$instance_id lanched successfully"
+
+  echo "Name=$instance launched successfully"
+  
 
 if [ $instance == "frontend" ]; then
         IP=$(
@@ -57,7 +56,7 @@ if [ $instance == "frontend" ]; then
             {
                 "Action": "UPSERT",
                 "ResourceRecordSet": {
-                    "Name": "'"$RECORD_NAME"'",
+                    "Name": "'$RECORD_NAME'",
                     "Type": "A",
                     "TTL": 1,
                     "ResourceRecords": [
