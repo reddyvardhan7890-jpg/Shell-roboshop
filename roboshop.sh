@@ -7,7 +7,6 @@ for instance in "$@"
 do
     instance_id=$(aws ec2 run-instances \
         --image-id "$AMI_ID" \
-        --Name "$@" \
         --instance-type t3.micro \
         --security-group-ids "$SG_ID" \
         --tag-specifications "ResourceType=instance,Tags=[{Key=Harsha,Value=$@}]" \
@@ -15,7 +14,7 @@ do
         --query 'Instances[0].PrivateIpAddress' \
         --output text)
 
-    rc=$?
+    rc=$?gi
 
     if [ $rc -ne 0 ]; then
         echo "Failed to launch instance: $instance"
