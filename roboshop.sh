@@ -11,7 +11,7 @@ do
         --security-group-ids "$SG_ID" \
         --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$@}]" \
         --query 'Instances[0].InstanceId' \
-        --query 'Instances[0].PrivateIpAddress' \
+        ##--query 'Instances[0].PrivateIpAddress' \
         --output text)
 
     rc=$?gi
@@ -24,4 +24,24 @@ do
     fi
 done
   echo "Name=$@ launched successfully"
-  echo "private ip address =$instance_id lanched successfully"
+  ##echo "private ip address =$instance_id lanched successfully"
+
+if [ $instance == "frontend" ]; then
+        IP=$(
+            aws ec2 describe-instances \
+            --instance-ids $INSTANCE_ID \
+            --query 'Reservations[].Instances[].PublicIpAddress' \
+            --output text
+        )
+        ##RECORD_NAME="$DOMAIN_NAME" # daws88s.online
+    else
+        IP=$(
+            aws ec2 describe-instances \
+            --instance-ids $INSTANCE_ID \
+            --query 'Reservations[].Instances[].PrivateIpAddress' \
+            --output text
+        )
+        RECORD_NAME="$instance.$DOMAIN_NAME" # mongodb.daws88s.online
+    fi
+
+    echo "IP address of $instance is $IP"
