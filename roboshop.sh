@@ -2,6 +2,8 @@
 
 SG_ID="sg-057bbd40346b0a45f"
 AMI_ID="ami-0220d79f3f480ecf5"
+ZONE_ID="Z014115838BJ0WT42DT0W"
+DOMAIN_NAME="daws88sonline.online"
 
 for instance in "$@"
 do
@@ -33,7 +35,7 @@ if [ $instance == "frontend" ]; then
             --query 'Reservations[].Instances[].PublicIpAddress' \
             --output text
         )
-        ##RECORD_NAME="$DOMAIN_NAME" # daws88s.online
+        RECORD_NAME="$DOMAIN_NAME" # daws88s.online
     else
         IP=$(
             aws ec2 describe-instances \
@@ -45,3 +47,28 @@ if [ $instance == "frontend" ]; then
     fi
 
     echo "IP address of $instance is $IP"
+
+    aws route53 change-resource-record-sets \
+    --hosted-zone-id $ZONE_ID \
+    --change-batch '
+    {
+        "comment": "Updating record for '"$instance"'",
+        "Changes": [
+            {
+                "Action": "UPSERT",
+                "ResourceRecordSet": {
+                    "Name": "'"$RECORD_NAME"'",
+                    "Type": "A",
+                    "TTL": 1,
+                    "ResourceRecords": [
+                        {
+                            "Value": "'"$IP"'"
+                        }
+                    ]
+                }
+            }
+        ]
+    }'
+
+    echo "DNS record for $instance updated successfully"
+done
