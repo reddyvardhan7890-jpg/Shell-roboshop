@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SG_ID="sg-057bbd40346b0a45f"
+SG_ID="sg-01f4954ece3c18d0b"
 AMI_ID="ami-0220d79f3f480ecf5"
 ZONE_ID="Z014115838BJ0WT42DT0W"
 DOMAIN_NAME="daws88sonline.online"
@@ -13,9 +13,9 @@ do
     --security-group-ids $SG_ID \
     --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$instance}]" \
     --query 'Instances[0].InstanceId' \
-    --output text)
+    --output text )
 
-    if [ $instance == "frontend" ]; then
+    if [ $instance = "frontend" ]; then
         IP=$(
             aws ec2 describe-instances \
             --instance-ids $INSTANCE_ID \
