@@ -4,20 +4,20 @@ SG_ID="sg-01f4954ece3c18d0b"
 AMI_ID="ami-0220d79f3f480ecf5"
 ZONE_ID="Z014115838BJ0WT42DT0W"
 DOMAIN_NAME="daws88sonline.online"
-AWS=/usr/local/bin/aws
+AWS="/usr/local/bin/aws"
 for instance in $@
 do
     INSTANCE_ID=$( $AWS ec2 run-instances \
     --image-id $AMI_ID \
-    --instance-type "t3.micro" \git
+    --instance-type "t3.micro" \
     --security-group-ids $SG_ID \
     --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$instance}]" \
     --query 'Instances[0].InstanceId' \
-    --output text)
+    --output text )
 
     if [ $instance = "frontend" ]; then
         IP=$(
-            aws ec2 describe-instances \
+            $AWS ec2 describe-instances \
             --instance-ids $INSTANCE_ID \
             --query 'Reservations[].Instances[].PublicIpAddress' \
             --output text
@@ -25,7 +25,7 @@ do
         RECORD_NAME="$DOMAIN_NAME" 
     else
         IP=$(
-            aws ec2 describe-instances \
+            $AWS ec2 describe-instances \
             --instance-ids $INSTANCE_ID \
             --query 'Reservations[].Instances[].PrivateIpAddress' \
             --output text
@@ -35,7 +35,7 @@ do
 
     echo "IP Address: $IP"
 
-    aws route53 change-resource-record-sets \
+    $AWS route53 change-resource-record-sets \
     --hosted-zone-id $ZONE_ID \
     --change-batch '
     {
